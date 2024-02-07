@@ -18,7 +18,7 @@ class QSystem:
         self.number_basis_states = len(basis_states)
         self.with_hermitian_conjugate = with_hermitian_conjugate
 
-    def annihilation_operator_action(self, index: int, state: list | int):
+    def annihilation_operator_action(self, index, state):
         """Action of the boson annihilation operator:
            index - index of the system element on which the operator acts
            x - state in the Fock basis of states on which the operator acts"""
@@ -32,7 +32,7 @@ class QSystem:
             state_copy[index] -= 1
             return state_copy, (state_copy[index] + 1) ** 0.5
 
-    def creation_operator_action(self, index: int, state: list | int):
+    def creation_operator_action(self, index, state):
         """Action of the boson creation operator:
            index - index of the system element on which the operator acts
            state - state in the Fock basis of states on which the operator acts"""
