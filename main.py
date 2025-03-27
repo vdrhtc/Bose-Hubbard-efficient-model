@@ -3,20 +3,20 @@ from qutip import Qobj
 
 
 class QSystem:
-    def __init__(self, frequencies: list, couplings: list, basis_states: list, with_hermitian_conjugate=False):
+    def __init__(self, frequencies: list, couplings: list, basis_states: list, fill_hermitian_conjugate=True):
         """frequencies - list of qubits frequencies, list of lists like [qubit_number, frequency]
            couplings - interaction between qubits, list of lists like [index_1, index_2, coupling_coefficient]
            basis_states - Fock states, like [0, ..., 0, 1, 0, ....], [0, ..., 0, 1, 0, ..., 0, 1, 0, ...] etc.
-           with_hermitian_conjugate - if couplings contains both terms [index_1, index_2, coupling_coefficient]
-            and [index_2, index_1, coupling_coefficient*] (* - means complex conjugation)
-            with_hermitian_conjugate must be set to False. Otherwise, it must be True (by default)
+           complete_hermitian_conjugate - automatically complete the given couplings [index_1, index_2, coupling_coefficient]
+               by [index_2, index_1, coupling_coefficient*] (* - means complex conjugation)
+               set to False to be able to fill the couplings array by hand
            """
         self.frequencies = frequencies
         self.number_qubits = len(frequencies)
         self.couplings = couplings
         self.basis_states = basis_states
         self.number_basis_states = len(basis_states)
-        self.with_hermitian_conjugate = with_hermitian_conjugate
+        self.fill_hermitian_conjugate = fill_hermitian_conjugate
 
     def annihilation_operator_action(self, index, state):
         """Action of the boson annihilation operator:
@@ -70,7 +70,7 @@ class QSystem:
                         matrix_diag[i][j] += const * const1 * elem[1]
         matrix_diag = np.array(matrix_diag)
         matrix_cross = np.array(matrix_cross)
-        if self.with_hermitian_conjugate:
+        if not self.fill_hermitian_conjugate:
             return Qobj(matrix_diag + matrix_cross)
         else:
             return Qobj(matrix_diag + matrix_cross + matrix_cross.conjugate().T)
